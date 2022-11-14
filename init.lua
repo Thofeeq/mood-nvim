@@ -24,7 +24,7 @@ require('plugins.lualine').setup()
 require('plugins.ctrlsf').setup()
 
 -- user
-require('user.lsp')
+-- require('user.lsp')
 require('user.config')
 require('user.debugger')
 

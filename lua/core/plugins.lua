@@ -10,6 +10,9 @@ function M.setup()
       use(plugins[p])
     end
 
+    use {'nvim-telescope/telescope-fzf-native.nvim', run = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
+    use 'weizheheng/ror.nvim'
+    use { 'otavioschwanck/telescope-alternate.nvim' }
     use { 'AndrewRadev/bufferize.vim' }
     use { 'mfussenegger/nvim-dap' }
     use { 'rcarriga/nvim-dap-ui' }
@@ -21,6 +24,8 @@ function M.setup()
       run = "npm install --legacy-peer-deps && npm run compile"
     }
 
+    use 'otavioschwanck/tmux-awesome-manager.nvim'
+    use { 'andersevenrud/cmp-tmux' }
     use { "catppuccin/nvim", as = "catppuccin" }
     use { 'stevearc/aerial.nvim' }
     use { 'sainnhe/gruvbox-material' }
@@ -193,6 +198,8 @@ function M.setup()
       }
     }
   }
+
+  require("ror").setup({})
 
   require("nvim-lsp-installer").setup({
     automatic_installation = { exclude = { "solargraph", "sorbet" } },

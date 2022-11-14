@@ -155,14 +155,9 @@ function M.setup()
     padding = { right = 1 },
   }
 
-  ins_left_both {
-    'filename',
-    file_status = true,
-    path = 0,
-    cond = conditions.buffer_not_empty,
-    color = { fg = colors.magenta, gui = 'bold' },
-  }
-
+  local filename_with_icon = require('lualine.components.filename'):extend()
+  filename_with_icon.apply_icon = require('lualine.components.filetype').apply_icon
+  filename_with_icon.icon_hl_cache = {}
 
   local function shorten_path(path, sep)
     -- ('([^/])[^/]+%/', '%1/', 1)
@@ -174,18 +169,25 @@ function M.setup()
   end
 
   ins_left_both {
+    filename_with_icon,
+    cond = conditions.buffer_not_empty,
+    colored = true,
+    color = { fg = colors.magenta, gui = 'bold' },
+  }
+
+  ins_left_both {
     function()
       local dir = vim.fn.expand("%:p:h")
 
       if dir == vim.fn.getcwd() then
         return " Project Root"
-    else
-local windwidth = options.globalstatus and vim.go.columns or vim.fn.winwidth(0)
-local estimated_space_available = windwidth - options.shorting_target
+      else
+        local windwidth = options.globalstatus and vim.go.columns or vim.fn.winwidth(0)
+        local estimated_space_available = windwidth - options.shorting_target
 
-local data = vim.fn.fnamemodify(dir, ":~:.")
-for _ = 0, count(data, '/') do
-if windwidth <= 84 or #data > estimated_space_available then
+        local data = vim.fn.fnamemodify(dir, ":~:.")
+        for _ = 0, count(data, '/') do
+          if windwidth <= 84 or #data > estimated_space_available then
             data = shorten_path(data, '/')
           end
         end
@@ -252,8 +254,8 @@ if windwidth <= 84 or #data > estimated_space_available then
   ins_left {
     function()
       if vim.g.maximized then
-        if(has_50_space) then
-          return " Window Maximized"
+        if (has_50_space) then
+          return "  Maximized"
         else
           return ""
         end
@@ -314,6 +316,10 @@ if windwidth <= 84 or #data > estimated_space_available then
   end
 
   ins_right {
+    'progress',
+  }
+
+  ins_right {
     function()
       return 'ﴵ %-2v'
     end,
@@ -332,10 +338,17 @@ if windwidth <= 84 or #data > estimated_space_available then
 
   ins_right {
     'filetype',
-    colored = true,
-    icon_only = false,
+    icons_enabled = false,
     cond = filetype_cond,
     color = { fg = colors.blue, gui = 'bold' },
+  }
+
+  ins_right {
+    function()
+      return require('tmux-awesome-manager.src.integrations.status').status_with_icons()
+    end,
+    cond = has_50_space,
+    color = { fg = colors.magenta, gui = 'bold' },
   }
 
   ins_right {

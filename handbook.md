@@ -15,6 +15,86 @@ To access your personal configuration, press `SPC f p`.  To install extra plugin
 
 On your personal configuration you can configure stuff like commands to run with `SPC o`, search per folder, theme, etc.
 
+# TMUX & Alacritty [!important]
+
+To use this configuration at your full potential, you need to use it with TMUX and Alacritty.
+
+Make sure TPM is installed on your home folder (Tmux Plugin Manager) (mood-installer installs automatically)
+
+After your tmux first open, press `C-x I` to install the packages.
+
+I also recommend `tmuxinator` to manage your projects.
+
+This configuration uses `tmux-awesome-manager` to manage multiple terminals.  You can configure your own commands on `SPC f p`.
+
+To see the already configured commands, press `SPC l f`.
+
+## Tmux Awesome Manager
+
+| Command              | Description                                               |
+|----------------------|-----------------------------------------------------------|
+| SPC l l              | List open terminals                                       |
+| SPC l f              | List all mapped commands                                  |
+| SPC l k              | Kill all terminals                                        |
+| SPC l p              | Switch: Open new terminals at window / pane               |
+| SPC l o              | Switch: Orientation of new panes to horizontal / vertical |
+| SPC l on visual mode | Send text terminal window                                 |
+
+## TMUX integration with alacritty
+
+Tmux prefix: C-x.  See more of tmux pressing `SPC o d t`
+Alacritty Configuration: `SPC o d a`.  (You can change here your font size, terminal theme, etc)
+
+Every command inside tmux is called using a prefix.  Alacritty allows to bypass the prefix, like: To switch tabs on tmux, is C-x 1,  with
+alacritty, is possible to map alt/cmd + 1 to call C-x 1 inside terminal.  Every major command is already mapped.  See your alacritty config at: `SPC o d a`.
+
+Explaining the commands (keybindings):
+M-o = Alt or Command + o
+M-S-v = Alt or command + shift + v
+
+Explaining tmux structure:
+
+Tmux: has many sessions
+Session = has many windows
+Window = is like a tab on common terminals
+Pane = A split inside a window
+
+Movimentation and Navigation:
+
+| Command         | Description                                      |
+|-----------------|--------------------------------------------------|
+| M-o             | Go to next pane                                  |
+| M-1 to M-9      | Switch window                                    |
+| M-S-a           | See all sessions (Press x to close one)          |
+| M-S-n and M-S-p | Next / Previous session                          |
+| M-Esc           | Go to next pane and maximize                     |
+| M-Esc           | Go to next pane and maximize                     |
+| M-a             | Alternate between current window and last window |
+
+Management:
+
+| Command  | Description                                   |
+|----------|-----------------------------------------------|
+| M-RET    | Maximize pane                                 |
+| M-S-v    | Split vertically                              |
+| M-S-s    | Split horizontally                            |
+| M-S-hjkl | Resize pane to direction                      |
+| M-t      | New window                                    |
+| M-S-t    | New session                                   |
+| M-j      | Join current window to another window as pane |
+| M-k      | Detach current pane as new window             |
+| M-S-d    | Detach tmux session                           |
+| M-x      | Close window / pane                           |
+
+Copy / search / Navigate:
+
+| Command | Description                                                                                              |
+|---------|----------------------------------------------------------------------------------------------------------|
+| M-/     | Search on terminal (Use n and N to go next / previous, you can press any vim motion after and y to copy)
+| M-,     | Copy a text from the terminal                                                                            |
+| M-;     | Switch orientation of panes                                                                              |
+| M-[     | Go to normal mode inside terminal                                                                        |
+
 # Quick Tips
 
 - To navigate on telescope use C-j and C-k.
@@ -56,9 +136,6 @@ OBS: This list persist between vim sections
 | SPC k                  | Kill current buffer                                |
 | SPC A                  | Go to Test (and vsplit)                            |
 | SPC a                  | Go to test                                         |
-| SPC l                  | List All Terminals (cool for opening closed tests) |
-| SPC L                  | Mark Terminal to Send Text                         |
-| SPC l (On visual mode) | Send text to marked terminal                       |
 | SPC 1 to SPC 9         | Go to harpoons                                     |
 |------------------------|----------------------------------------------------|
 | ]g                     | Next git hunk                                      |
@@ -85,48 +162,6 @@ OBS: This list persist between vim sections
 | ENTER   | Maximize window temporary (press ENTER again to restore)
 
 `<C-w>u` will undo a closed window.
-
-# Terminal Management
-
-Is recommended to add vi-mode to your plugins in `oh-my-zsh`, like that:
-
-`plugins=(git rails git ruby zsh-autosuggestions vi-mode)`
-
-Also, verify if your ~/.zshrc or ~/.bashrc has:
-
-```
-export VISUAL="nvim -u ~/.config/nvim/visual.lua"
-export EDITOR="nvim -u ~/.config/nvim/visual.lua"
-
-bindkey -v # Vi Mode
-set -o vi
-KEYTIMEOUT=5
-```
-
-and your .inputrc has:
-
-```
-set editing-mode vi
-set keymap vi-insert
-Control-l: clear-screen
-```
-
-With this extension and settings, you can edit like vim in terminal.
-
-`Ctrl + k` Hide terminal and go back to code
-`Ctrl + g`  Go to normal mode inside terminal
-
-`SPC v` open a blank terminal
-`SPC l` List All terminals
-`SPC i` Open Last visit terminal.
-`SPC !` re-run last terminal command
-`SPC #` Re-run terminal commands configured on project startup.
-`SPC %` Rerun terminal commands configured on project startup on all tmux windows.
-`SPC q s` Close startup terminal
-`SPC q S` Close startup terminal on all tmux windows.
-`:Term command` open a terminal with the command
-
-Go to your personal settings `SPC f p` and add terminal commands.  There is a bunch of examples there!
 
 # Searching
 
@@ -207,28 +242,28 @@ To execute some command in all items of the quickfix list, just run `:cfdo S/old
 
 I Consider this way the most efficient way to create files and find files on current file folder.
 
-| Insert / Normal         | / Action                                                                    |
-|-------------------------|-----------------------------------------------------------------------------|
-| Most Important commands |                                                                             |
-|-------------------------|-----------------------------------------------------------------------------|
-| tab                     | Mark item to item to move / copy / Rename                                   |
-| C-f                     | Go to a folder on project (super useful to create new files / move)         |
-| C-space                 | Create file/folder from what you typed on prompt                            |
-| C-p                     | Paste Stuff that will marked with tab                                       |
-| C-r                     | Rename multi-selected files/folders                                         |
-| C-e                     | Move multi-selected files/folders to current path                           |
-| C-c/c                   | Go to parent directory                                                      |
-| C-o/o                   | Delete selected file(s)                                                     |
-| C-g                     | Go to current working directory (cwd)                                       |
-|-------------------------|-----------------------------------------------------------------------------|
-| Other commands          |                                                                             |
-|-------------------------|-----------------------------------------------------------------------------|
-| C-o/o                   | Open file/folder with default system application                            |
-| C-t/t                   | Change nvim's cwd to selected folder/file(parent)                           |
-| C-f/f                   | Toggle between file and folder browser                                      |
-| C-h/h                   | Toggle hidden files/folders                                                 |
-| C-s/s                   | Toggle all entries ignoring ./ and ../                                      |
-|-------------------------|-----------------------------------------------------------------------------|
+| Insert / Normal              | / Action                                                            |
+|------------------------------|---------------------------------------------------------------------|
+| Most Important commands      |                                                                     |
+|------------------------------|---------------------------------------------------------------------|
+| tab                          | Mark item to item to move / copy / Rename                           |
+| C-f                          | Go to a folder on project (super useful to create new files / move) |
+| C-space or S-RET (alacritty) | Create file/folder from what you typed on prompt                    |
+| C-p                          | Paste Stuff that will marked with tab                               |
+| C-r                          | Rename multi-selected files/folders                                 |
+| C-e                          | Move multi-selected files/folders to current path                   |
+| C-c/c                        | Go to parent directory                                              |
+| C-o/o                        | Delete selected file(s)                                             |
+| C-g                          | Go to current working directory (cwd)                               |
+|------------------------------|---------------------------------------------------------------------|
+| Other commands               |                                                                     |
+|------------------------------|---------------------------------------------------------------------|
+| C-o/o                        | Open file/folder with default system application                    |
+| C-t/t                        | Change nvim's cwd to selected folder/file(parent)                   |
+| C-f/f                        | Toggle between file and folder browser                              |
+| C-h/h                        | Toggle hidden files/folders                                         |
+| C-s/s                        | Toggle all entries ignoring ./ and ../                              |
+|------------------------------|---------------------------------------------------------------------|
 
 # Snippets and autocomplete
 
@@ -296,21 +331,12 @@ On command mode `:`, you can press C-v to paste, `C-j` to go back one word, and 
 
 `:markdownPreview` is awesome to create markdown files.
 
+### Reseting configs
+
+After while, i add some new features on the base configs (like tmux, alacritty, lsp, etc).  You can:
+
+:CleanConfigsExceptBaseConfig = Clean everything, except config.lua (recommended)
+:CleanConfigs = Clean everything, including config.lua
+:CleanConfigsExceptUsers = Clean tmux, alacritty and lazygit.
+
 ### For additional commands, just press SPC and follow your heart.
-
-# Alacritty + Tmux + Tmuxinator
-
-Use tmuxinator to start one or more projects.
-Use tmux + alacritty (terminal) to work with terminal.
-
-Install alacritty in your system.  Use Alt (or command) + 1 to 9 to change tmux window, Alt + t to create new Tmux Tab, etc.
-Alt + x to close the tab.
-
-The prefix for tmux is C-x.
-
-Mood install automatically the configuration for tmux and alacritty for you, matching the neovim theme.
-
-If you want to use tmux, install the plugin manager for IT:
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-
-And after the first start, press C-x I to install the plugins from mood configuration.

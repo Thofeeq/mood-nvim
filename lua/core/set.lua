@@ -4,18 +4,13 @@ local set = vim.api.nvim_set_option
 
 function M.setup()
   set('undofile', true)
-  set('cmdheight', 1)
   set('nu', true)
 
-  set('cmdheight', 1)
 	set('hidden', true)
 	set('shiftwidth', 2)
 	set('tabstop', 2)
 	set('compatible', false)
 	set('ic', true)
-
-	-- TODO: Move to user
-	set('colorcolumn', '125')
 
 	vim.cmd('syntax enable')
 	set('fileencodings', 'utf-8,sjis,euc-jp,latin')

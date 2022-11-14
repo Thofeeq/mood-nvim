@@ -12,8 +12,6 @@ vim.api.nvim_set_keymap('n', ']e', '<cmd>lua vim.diagnostic.goto_next()<CR>', op
 local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
-  require("aerial").on_attach(client, bufnr)
-
   local bufopts = { noremap=true, silent=true, buffer=bufnr }
   vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
   vim.keymap.set('n', 'gd', ':Telescope lsp_definitions<CR>', bufopts)
@@ -31,8 +29,6 @@ vim.diagnostic.config {
 }
 
 -- -- Show line diagnostics automatically in hover window (Uncomment if you set virtual_text to false)
--- vim.o.updatetime = 250
--- vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
 
 -------------------------
 -- NVIM CMP (SNIPPETS) --
@@ -106,6 +102,7 @@ cmp.setup({
     end
     }},
     { name = "path" },
+    { name = 'tmux', option = { all_panes = true } },
     { name = "calc" }
   }),
   mapping = mappings,
@@ -119,11 +116,8 @@ require "lsp_signature".setup()
 
 local lspconfig = require('lspconfig')
 
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-
 lspconfig.solidity.setup({
   on_attach = on_attach,
-  capabilities = capabilities,
   settings = {
     solidity = { includePath = '', remapping = { ["@OpenZeppelin/"] = 'OpenZeppelin/openzeppelin-contracts@4.6.0/' } }
   },
@@ -132,7 +126,6 @@ lspconfig.solidity.setup({
 require'lspconfig'.html.setup {
   filetypes = { "eruby", "html" },
   on_attach = on_attach,
-  capabilities = capabilities,
   init_options = {
     configurationSection = { "html", "css", "javascript", "eruby" },
     embeddedLanguages = {
@@ -145,17 +138,22 @@ require'lspconfig'.html.setup {
 
 lspconfig.solargraph.setup {
   on_attach = on_attach,
-  capabilities = capabilities,
+  flags = {
+    debounce_text_changes = 50,
+  },
   settings = {
     solargraph = {
-      diagnostics = false
+      diagnostics = false,
+      formatting = true,
+      useBundler = true
     }
   }
 }
 
+-- -- if your rubocop doesn't work with Solargraph, just uncomment this and set diagnostics to false above (on solargraph)
 lspconfig.diagnosticls.setup {
   filetypes = { "ruby" },
-  capabilities = capabilities,
+  single_file_support = false,
   init_options = {
     linters = {
       rubocop = {
@@ -229,40 +227,17 @@ lspconfig.diagnosticls.setup {
         }
       }
     },
-    formatters = {
-      dartfmt = {
-        command = "dartfmt",
-        args = { "--fix" }
-      },
-      rubocop = {
-        command = "bundle",
-        args = { "exec",
-          "rubocop",
-          "-a",
-          "%filepath",
-          ">",
-          "tmp/rubocop"
-        }
-      }
-    },
     filetypes = {
       sh = "shellcheck",
       email = "languagetool",
       ruby = "rubocop"
-    },
-    formatFiletypes = {
-      dart = "dartfmt",
-      ruby = "rubocop"
     }
   }
-
 }
 
 for _, lsp in pairs(servers) do
   lspconfig[lsp].setup {
     on_attach = on_attach,
-    capabilities = capabilities,
-
     flags = {
       -- This will be the default in neovim 0.7+
       debounce_text_changes = 50,

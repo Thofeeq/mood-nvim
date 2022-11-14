@@ -18,6 +18,35 @@ function M.setup()
       return l:word
     endfunction
 
+    function OpenTestAlternateAndSplit()
+      let win_count = luaeval('require("utils.buf_count")()')
+      let test_path = eval('rails#buffer().alternate()')
+
+      execute "normal! \<C-w>o"
+
+      execute "norm \<C-w>v"
+
+      execute "call OpenTestAlternate()"
+
+      if test_path =~ 'app/'
+        execute "norm \<C-w>x"
+      endif
+    endfunction
+
+    function OpenTestAlternate()
+      let test_path = eval('rails#buffer().alternate()')
+
+      execute "e " . test_path
+
+      if !filereadable(test_path) && join(getline(1,'$'), "\n") == ''
+        if test_path =~ "spec/"
+          execute "norm itemplate_test\<C-j>"
+        else
+          execute "norm iminitest\<C-j>"
+        endif
+      endif
+    endfunction
+
     function! RemoveQFItem()
       let curqfidx = line('.') - 1
       let qfall = getqflist()
@@ -29,9 +58,11 @@ function M.setup()
 
     command! RemoveQFItem :call RemoveQFItem()
 
-    function OpenCommand()
-      if &filetype == 'dashboard'
-        lua require('mood-scripts.command-on-start').autostart()
+    function SearchClassName()
+      let class_name = GetClassName()
+
+      if class_name != ""
+        execute ":Telescope grep_string search=" . class_name
       endif
     endfunction
 
@@ -68,8 +99,12 @@ function M.setup()
 
         if class_name != ''
           echo "Copied to clipboard: " . class_name
+
+          return class_name
         else
           echo "No class or module found"
+
+          return ""
         endif
       endif
     endfunction
@@ -160,7 +195,7 @@ function M.setup()
     endfunction
 
     function! TermStrategy(cmd)
-      execute "call OpenTerm(a:cmd, 'Vim Test', 2, 0)"
+      lua require("tmux-awesome-manager").execute_command({ cmd = vim.api.nvim_eval("a:cmd"), name = "Tests...", open_as = 'pane', size = '50%', focus_when_call = false })
     endfunction
 
     function! StripTrailingWhitespaces()
@@ -213,6 +248,14 @@ function M.setup()
       execute "!sh ~/.config/nvim/bin/clean.sh"
     endfunction
 
+    function s:CleanBasicConfigs()
+      execute "!sh ~/.config/nvim/bin/basic_clean.sh"
+    endfunction
+
+    function s:CleanAllExceptConfig()
+      execute "!sh ~/.config/nvim/bin/clean_all_except_config.sh"
+    endfunction
+
 
     function s:UpdateMood()
       execute "!cd ~/.config/nvim; git pull origin main -f"
@@ -222,6 +265,8 @@ function M.setup()
     endfunction
 
     command! CleanConfigs :call s:CleanConfigs()
+    command! CleanConfigsExceptUsers :call s:CleanBasicConfigs()
+    command! CleanConfigsExceptBaseConfig :call s:CleanAllExceptConfig()
     command! UpdateMood :call s:UpdateMood()
 
     function! ExecuteMacroOverVisualRange()

@@ -36,6 +36,9 @@ function M.setup()
       current_buffer_fuzzy_find = vertical_search
     },
     extensions = {
+      fzf = {
+        fuzzy = true,
+      },
       ["ui-select"] = {
         require("telescope.themes").get_dropdown { }
       },
@@ -98,14 +101,16 @@ function M.setup()
   require('telescope').load_extension('neoclip')
   require('telescope').load_extension('ultisnips')
   require('telescope').load_extension('dap')
+  require('telescope').load_extension('telescope-alternate')
+  require('telescope').load_extension('fzf')
+  require('telescope').load_extension('tmux-awesome-manager')
 
   require('neoclip').setup({
     enable_persistent_history = true,
     keys = {
       telescope = {
         i = {
-          select = '<cr>',
-          paste = '<c-n>',
+          paste = '<cr>',
           paste_behind = '<C-p>',
           replay = '<c-q>',  -- replay a macro
           delete = '<c-d>',  -- delete an entry
